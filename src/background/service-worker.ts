@@ -23,6 +23,7 @@ chrome.runtime.onMessage.addListener(async (message: SingleTimerMessage|LoopTime
     case "PAUSE_LOOP_TIMER":
     case "RESUME_LOOP_TIMER":
       return await handleLoopTimerMessage(message);
+    case "INITIALIZE_TASK_STATE":
     case "ADD_TASK":
     case "DELETE_TASK":
     case "DELETE_TASK_TAB":

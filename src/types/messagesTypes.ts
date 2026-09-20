@@ -35,6 +35,9 @@ type: "RESUME_LOOP_TIMER";
 type: "STOP_LOOP_TIMER";
 };
 export type TaskMessage = {
+  type: "INITIALIZE_TASK_STATE";
+}|
+{
   type: "ADD_TASK";
   description: string;
   tabId: string;

@@ -73,6 +73,15 @@ function App() {
       >
         Test storage-loop
       </button> */}
+      <button
+        onClick={() => {
+          chrome.storage.local.get("taskstate").then((result) => {
+            alert(JSON.stringify(result));
+          })
+        }}
+      >
+        Test taskstate
+      </button>
       <Footer />
     </>
   );

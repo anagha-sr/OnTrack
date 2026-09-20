@@ -22,6 +22,7 @@ export async function handleLoopTimerMessage(message: LoopTimerMessage) {
     case "STOP_LOOP_TIMER": {
       await stopSound();
       const result = await chrome.storage.local.get("loop-timer");
+      
       const oldLoopTimer = result["loop-timer"] as LoopTimerState;
       const newLoopTimer: LoopTimerState = {
         status: "idle",

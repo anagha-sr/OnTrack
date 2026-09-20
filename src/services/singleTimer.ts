@@ -82,7 +82,7 @@ export async function handleSingleTimerAlarm(alarm: chrome.alarms.Alarm) {
   
   await chrome.storage.local.set({ "single-timer":completedSingleTimer});
   await setBadge();
-  await chrome.notifications.create({
+  chrome.notifications.create({
     type: "basic",
     title: "Timer",
     message: "Timer ended",

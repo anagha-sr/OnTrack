@@ -1,16 +1,14 @@
-import { useState } from "react";
+import { useState , useEffect} from "react";
 import useStorageValue from "../hooks/useStorageValue";
 import type { TaskState } from "../types/taskTypes";
 
 const defaultTaskState: TaskState = {
-    [crypto.randomUUID()]:{tabName: "Work",
-    tasks: []},
-    [crypto.randomUUID()]:{tabName: "Personal",
-    tasks: []},
-  }
+  [crypto.randomUUID()]: { tabName: "Work", tasks: [] },
+  [crypto.randomUUID()]: { tabName: "Personal", tasks: [] },
+};
 
 function TasksPage() {
-  const taskState = useStorageValue<TaskState>("taskstate",defaultTaskState);
+  const taskState = useStorageValue<TaskState>("taskstate", defaultTaskState);
   const [currentTab, setCurrentTab] = useState<string>(
     Object.keys(taskState)[0],
   );
@@ -19,47 +17,71 @@ function TasksPage() {
   const [isAddTabOpen, setIsAddTabOpen] = useState<boolean>(false);
   const [newTabName, setNewTabName] = useState<string>("");
   const [newTaskDescription, setNewTaskDescription] = useState<string>("");
+  useEffect(() => {
+    chrome.runtime.sendMessage({
+      type: "INITIALIZE_TASK_STATE",
+    });
+  }, []);
 
   const handleAddTab = async (tabName: string) => {
-   try{ await chrome.runtime.sendMessage({
-      type: "ADD_TASK_TAB",
-      tabName: tabName
-    })}catch(e){console.error("Add tab error:",e)}
+    try {
+      await chrome.runtime.sendMessage({
+        type: "ADD_TASK_TAB",
+        tabName: tabName,
+      });
+    } catch (e) {
+      console.error("Add tab error:", e);
+    }
     setIsAddTabOpen(false);
   };
 
-  const handleRenameTab =async (tabId: string) => {
-    try{await chrome.runtime.sendMessage({
-      type: "RENAME_TASK_TAB",
-      tabId: tabId,
-      newTabName
-    })}catch(e){console.error("Rename tab error:",e)}
+  const handleRenameTab = async (tabId: string) => {
+    try {
+      await chrome.runtime.sendMessage({
+        type: "RENAME_TASK_TAB",
+        tabId: tabId,
+        newTabName,
+      });
+    } catch (e) {
+      console.error("Rename tab error:", e);
+    }
     setNewTabName("");
     setRenamingTab(null);
   };
-  const handleDeleteTab = (tabId: string) => {
-    try{chrome.runtime.sendMessage({
-      type: "DELETE_TASK_TAB",
-      tabId: tabId
-    })}catch(e){console.error("Delete tab error:",e)}
+  const handleDeleteTab = async (tabId: string) => {
+    try {
+      await chrome.runtime.sendMessage({
+        type: "DELETE_TASK_TAB",
+        tabId: tabId,
+      });
+    } catch (e) {
+      console.error("Delete tab error:", e);
+    }
   };
   const handleAddTask = () => {
-    try{chrome.runtime.sendMessage({
-      type: "ADD_TASK",
-      description: newTaskDescription,
-      tabId: currentTab
-    })}catch(e){console.error("Add task error:",e)}
+    try {
+      chrome.runtime.sendMessage({
+        type: "ADD_TASK",
+        description: newTaskDescription,
+        tabId: currentTab,
+      });
+    } catch (e) {
+      console.error("Add task error:", e);
+    }
     setNewTaskDescription("");
-    setIsAddTaskOpen(false)
+    setIsAddTaskOpen(false);
   };
 
   const handleTaskToggle = (taskId: string) => {
-    try{chrome.runtime.sendMessage({
-      type: "TOGGLE_TASK",
-      taskId: taskId,
-      tabId: currentTab
-    })}catch(e){console.error("Toggle task error:",e)}
-  
+    try {
+      chrome.runtime.sendMessage({
+        type: "TOGGLE_TASK",
+        taskId: taskId,
+        tabId: currentTab,
+      });
+    } catch (e) {
+      console.error("Toggle task error:", e);
+    }
   };
 
   return (
@@ -107,14 +129,12 @@ function TasksPage() {
       <div>
         <h2 className="sr-only">{currentTab}</h2>
         <ul>
-          {taskState[currentTab].tasks.map((task) => (
+          {taskState[currentTab]?.tasks?.map((task) => (
             <li key={task.taskId}>
               <input
                 type="checkbox"
                 checked={task.completed}
-                onChange={() =>
-                  handleTaskToggle(task.taskId)
-                }
+                onChange={() => handleTaskToggle(task.taskId)}
               />
               {task.description}
             </li>
