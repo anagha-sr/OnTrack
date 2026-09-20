@@ -1,7 +1,7 @@
 import type { SingleTimerMessage } from "../types/messagesTypes";
 import type { SingleTimerState } from "../types/singleTimerTypes";
-import setBadge from "./setBadge";
-import playSound from "./playSound";
+import {setBadge, clearBadge} from "./badge";
+import { playSound, stopSound } from "./sound"
 //All time units are in milliseconds.
 
 export async function handleSingleTimerMessage(message: SingleTimerMessage) {
@@ -30,6 +30,7 @@ export async function handleSingleTimerMessage(message: SingleTimerMessage) {
         status: "paused",
         remaining: singleTimer.endTime - Date.now(),
       };
+
       await chrome.storage.local.set({ "single-timer": pausedTimer });
       break;
     }
@@ -56,9 +57,10 @@ export async function handleSingleTimerMessage(message: SingleTimerMessage) {
       const singleTimer: SingleTimerState = {
         status: "idle",
       };
+      await stopSound();
       await chrome.alarms.clear("timer-end");
       await chrome.storage.local.set({ "single-timer":singleTimer });
-      await chrome.action.setBadgeText({ text: "" });
+      await clearBadge();
       break;
     }
     default:
@@ -90,6 +92,6 @@ export async function handleSingleTimerAlarm(alarm: chrome.alarms.Alarm) {
     console.log("notificationId:", notificationId);
     console.log("error:", chrome.runtime.lastError);
   });
-  playSound();
+  await playSound();
 }
 

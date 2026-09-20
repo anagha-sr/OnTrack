@@ -20,7 +20,8 @@
   --border: #DCE7E2;
 
   /* Interactive */
-  --primary: #183B4A;
+  --primary-bg: #6FAF8F;
+  --primary-text: #183B4A;
   --primary-hover: #244E5E;
   --focus: #6FAF8F;
 
@@ -36,8 +37,9 @@
     --text: #fff3d6;
     --text-muted: #B4C5C5;
     --border: #304750;
-    --primary: #6FAF8F;
-    --primary-hover: #82B99A;
+    --primary-bg: #2b4f45;
+    --primary-text:  #fff3d6;
+    --primary-hover: #4e7f71;
   }
 }
 
@@ -75,15 +77,30 @@ main{
 }
 
 /* Primary action */
+.btn {
+  border: 2px solid var(--primary-bg);
+  border-radius: 1em 1em 1em 2px;
+  padding: 0.5em;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  font-weight: 500;
+}
+.btn:disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
 .btn-primary {
-  background: var(--brand-deep);
-  color: #fff;
+  background: var(--primary-bg);
+  color: var(--primary-text);
 }
 
-.btn-primary:hover {
-  background: #244E5E;
+.btn-primary:hover,.btn-secondary:hover {
+  background: var(--primary-hover);
 }
-
+.btn-secondary{
+  background:transparent;
+  color: var(--text);
+}
 /* Green action / progress */
 .btn-green {
   background: var(--brand-green);

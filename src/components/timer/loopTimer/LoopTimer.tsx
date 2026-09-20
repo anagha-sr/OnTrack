@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import type { LoopTimerState } from "../../../types/loopTimerTypes";
-import useStorageValue from "../../../hooks/useStorage";
+import useStorageValue from "../../../hooks/useStorageValue";
 import LoopRunningTimer from "./LoopRunningTimer";
 import LoopSetTimer from "./LoopSetTimer";
 
@@ -8,7 +8,7 @@ function LoopTimer() {
   const [workDuration, setWorkDuration] = useState(0); // in seconds
   const [restDuration, setRestDuration] = useState(0); // in seconds
   const [remaining, setRemaining] = useState(0); // in milliseconds
-  const [loopTimer, setLoopTimer] = useStorageValue<LoopTimerState>(
+  const loopTimer = useStorageValue<LoopTimerState>(
     "loop-timer",
     {
       status: "idle",
@@ -16,28 +16,6 @@ function LoopTimer() {
       restDuration,
     },
   );
-  //on page load
-  useEffect(() => {
-    try {
-      chrome.storage.local
-        .get("loop-timer")
-        .then(async (result) => {
-          let timer = result["loop-timer"] as LoopTimerState;
-          if (
-            !timer ||
-            (timer.status == "running" && timer.phaseEndTime < Date.now())
-          ) {
-            timer = { ...timer, status: "idle" };
-            await chrome.storage.local.set({ "loop-timer": timer });
-          }
-          setLoopTimer(timer);
-        })
-        .catch((e) => console.log("On page load error", e));
-    } catch (e) {
-      console.log(e);
-    }
-  }, []);
-  //updating the remaining time  based on the current timer and counting down
   useEffect(() => {
     // console.log(currentTimer);
     if (loopTimer?.status === "running") {
@@ -81,11 +59,11 @@ function LoopTimer() {
       type: "PAUSE_LOOP_TIMER",
     });
   };
-  const resumeLoopTimer = async () => {
-    await chrome.runtime.sendMessage({
-      type: "RESUME_LOOP_TIMER",
-    });
-  };
+  // const resumeLoopTimer = async () => {
+  //   await chrome.runtime.sendMessage({
+  //     type: "RESUME_LOOP_TIMER",
+  //   });
+  // };
   const changePhase = async () => {
     await chrome.runtime.sendMessage({
       type: "PHASE_CHANGE_LOOP_TIMER",
@@ -94,21 +72,11 @@ function LoopTimer() {
 
   return (
     <div className="w-full">
+      {/* Timer display */}
       {(loopTimer.status == "running" || loopTimer.status == "paused") && (
         <div>
-        <LoopRunningTimer remaining={Math.floor(remaining / 1000)} />
-        </div>
-      )}
-      {loopTimer.status === "waiting" && loopTimer.phase === "work" && (
-        <div>
-          <p>Good work. Take a break</p>
-          <button onClick={changePhase}>Okay</button>
-        </div>
-      )}
-      {loopTimer.status === "waiting" && loopTimer.phase === "rest" && (
-        <div>
-          <p>Hope you had a good break. Let's get back to work</p>
-          <button onClick={changePhase}>Okay</button>
+          <p className="text-center pt-4">Remaining {loopTimer.phase} time:</p>
+          <LoopRunningTimer remaining={Math.floor(remaining / 1000)} />
         </div>
       )}
       {loopTimer.status === "idle" && (
@@ -121,34 +89,46 @@ function LoopTimer() {
           />
         </div>
       )}
-      <div className="timer-controls flex gap-2">
+
+      {/* Messages */}
+      {loopTimer.status === "waiting" && loopTimer.phase === "work" && (
+        <div className="timer-message">
+          <p>Your work timer has ended. <br/>
+           It's time to take a break.</p>
+          <div className="flex justify-center gap-4">
+            <button className="btn btn-primary" onClick={changePhase}>Okay</button>
+            <button className="btn btn-secondary" onClick={stopLoopTimer}>Stop</button>
+          </div>
+        </div>
+      )}
+      {loopTimer.status === "waiting" && loopTimer.phase === "rest" && (
+        <div className="timer-message">
+          <p>Your rest timer has ended. <br/>Hope you had a good break. Let's get back to work</p>
+          <div className="flex justify-center gap-4">
+            <button className="btn btn-primary" onClick={changePhase}>Okay</button>
+            <button className="btn btn-secondary" onClick={stopLoopTimer}>Stop</button>
+          </div>
+        </div>
+      )}
+      {/* Controls */}
+      <div className="timer-controls flex gap-4 justify-center mt-4">
         {loopTimer?.status === "idle" && (
-          <button onClick={startLoopTimer}>Start</button>
+          <button className="btn btn-primary" disabled={!workDuration || !restDuration} onClick={startLoopTimer}>Start</button>
         )}
-        {loopTimer?.status !== "idle" && (
+        {loopTimer?.status === "running" && (
           <>
-            <button
-              onClick={
-                loopTimer?.status === "paused"
-                  ? resumeLoopTimer
-                  : pauseLoopTimer
-              }
-            >
-              {loopTimer?.status === "paused" ? "Resume" : "Pause"}
-            </button>
-            <button onClick={stopLoopTimer}>Stop</button>
+            <button className="btn btn-primary" onClick={pauseLoopTimer}>Pause</button>
+            <button className="btn btn-secondary" onClick={stopLoopTimer}>Stop</button>
           </>
         )}
+        {loopTimer?.status === "paused" && (
+          <>
+            <button className="btn btn-primary" onClick={pauseLoopTimer}>Resume</button>
+            <button className="btn btn-secondary" onClick={stopLoopTimer}>Stop</button>
+          </>
+        )}
+     
       </div>
-      <button
-        onClick={() => {
-          chrome.storage.local.get("loop-timer").then((result) => {
-            alert(JSON.stringify(result));
-          });
-        }}
-      >
-        Test storage
-      </button>
     </div>
   );
 }

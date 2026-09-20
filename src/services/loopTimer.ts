@@ -1,8 +1,7 @@
 import { type LoopTimerMessage } from "../types/messagesTypes";
 import type { LoopTimerState } from "../types/loopTimerTypes";
-import setBadge from "./setBadge";
-import playSound from "./playSound";
-
+import { setBadge , clearBadge} from "./badge";
+import { playSound, stopSound } from "./sound";
 
 export async function handleLoopTimerMessage(message: LoopTimerMessage) {
   switch (message.type) {
@@ -21,6 +20,7 @@ export async function handleLoopTimerMessage(message: LoopTimerMessage) {
       break;
     }
     case "STOP_LOOP_TIMER": {
+      await stopSound();
       const result = await chrome.storage.local.get("loop-timer");
       const oldLoopTimer = result["loop-timer"] as LoopTimerState;
       const newLoopTimer: LoopTimerState = {
@@ -28,14 +28,14 @@ export async function handleLoopTimerMessage(message: LoopTimerMessage) {
         workDuration: oldLoopTimer.workDuration,
         restDuration: oldLoopTimer.restDuration,
       };
-
       await chrome.alarms.clear("work-phase-end");
       await chrome.alarms.clear("rest-phase-end");
       await chrome.storage.local.set({ "loop-timer": newLoopTimer });
-      await chrome.action.setBadgeText({ text: "" });
+      await clearBadge();
       break;
     }
     case "PHASE_CHANGE_LOOP_TIMER": {
+      await stopSound();
       const result = await chrome.storage.local.get("loop-timer");
       let loopTimer = result["loop-timer"] as LoopTimerState;
       if (loopTimer?.status !== "waiting") {
@@ -74,6 +74,7 @@ export async function handleLoopTimerMessage(message: LoopTimerMessage) {
           when: newPhaseEndTime,
         });
       }
+      await clearBadge();
       break;
     }
 
@@ -121,7 +122,8 @@ export async function handleLoopTimerMessage(message: LoopTimerMessage) {
 }
 
 export async function handleLoopTimerAlarm(alarm: chrome.alarms.Alarm) {
-  if ((alarm.name !== "work-phase-end")&&(alarm.name !== "rest-phase-end")) return;
+  if (alarm.name !== "work-phase-end" && alarm.name !== "rest-phase-end")
+    return;
   const result = await chrome.storage.local.get("loop-timer");
   const loopTimer = result["loop-timer"] as LoopTimerState;
   if (loopTimer?.status !== "running") {
@@ -130,7 +132,7 @@ export async function handleLoopTimerAlarm(alarm: chrome.alarms.Alarm) {
   const waitingLoopTimer: LoopTimerState = {
     ...loopTimer,
     status: "waiting",
-  }
+  };
   await chrome.storage.local.set({ "loop-timer": waitingLoopTimer });
   await setBadge();
   await chrome.notifications.create({
