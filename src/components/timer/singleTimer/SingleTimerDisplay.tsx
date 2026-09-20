@@ -34,7 +34,13 @@ function TimerDisplay({
   const { hours, minutes, seconds } = formatTime();
   const handleDurationChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const id = event.target.id;
-    const value = parseInt(event.target.value) || 0;
+    let value = parseInt(event.target.value) || 0;
+    if(value<parseInt(event.target.min)){
+      value=parseInt(event.target.min)
+    }
+    else if(value>parseInt(event.target.max)){
+      value=parseInt(event.target.max)
+    }
     if (id === "hours") {
       const reminder = duration % 3600;
       setDuration(value * 3600 + reminder);
@@ -51,45 +57,50 @@ function TimerDisplay({
   };
 
   return (
-    <div className={`timer-display flex gap-2 ${timerStatus === "completed" ? "completed" : ""}`} >
-      <label htmlFor="hours">Hours</label>
+    <div className={`timer-display mt-4 flex justify-center gap-2 ${timerStatus === "completed" ? "completed" : ""}`} >
+      <div className="tooltip-wrapper">
+        <label htmlFor="hours" className="tooltip">Hours</label>
+        <input
+          id="hours"
+          type="number"
+          value={hours}
+          onChange={handleDurationChange}
+          min="0"
+          max="23"
+          step="1"
+          disabled={timerStatus !== "idle"}
+        />
+      </div>
+            <span aria-hidden>:</span>
 
-      <input
-        id="hours"
-        type="number"
-        value={hours}
-        onChange={handleDurationChange}
-        min="0"
-        max="23"
-        step="1"
-        disabled={timerStatus !== "idle"}
-      />
+      <div className="tooltip-wrapper">
+        <label htmlFor="minutes" className="tooltip">Minutes</label>
+        <input
+          id="minutes"
+          type="number"
+          value={minutes}
+          onChange={handleDurationChange}
+          min="0"
+          max="59"
+          step="1"
+          disabled={timerStatus !== "idle"}
+        />
+      </div>
+            <span aria-hidden>:</span>
 
-      <label htmlFor="minutes">Minutes</label>
-
-      <input
-        id="minutes"
-        type="number"
-        value={minutes}
-        onChange={handleDurationChange}
-        min="0"
-        max="59"
-        step="1"
-        disabled={timerStatus !== "idle"}
-      />
-
-      <label htmlFor="seconds">Seconds</label>
-
-      <input
-        id="seconds"
-        type="number"
-        value={seconds}
-        onChange={handleDurationChange}
-        min="0"
-        max="59"
-        step="1"
-        disabled={timerStatus !== "idle"}
-      />
+      <div className="tooltip-wrapper">
+        <label htmlFor="seconds" className="tooltip">Seconds</label>
+        <input
+          id="seconds"
+          type="number"
+          value={seconds}
+          onChange={handleDurationChange}
+          min="0"
+          max="59"
+          step="1"
+          disabled={timerStatus !== "idle"}
+        />
+      </div>
     </div>
   );
 }

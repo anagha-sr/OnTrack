@@ -12,7 +12,7 @@ function SingleTimer() {
 
   //on page load
   useEffect(() => {
-    chrome.action.setBadgeText({ text: "" });
+    try{
     chrome.storage.local.get("single-timer").then(async (result) => {
     let timer = result["single-timer"] as SingleTimerState;
     if(!timer||(timer.status=="running"&&timer.endTime<Date.now())) {
@@ -21,6 +21,7 @@ function SingleTimer() {
     }
       setSingleTimer(timer);
     }).catch((e) => console.log("On page load error", e));
+  }catch(e){console.log(e)}
   }, []);
   //updating the remaining time  based on the current timer and counting down
   useEffect(() => {

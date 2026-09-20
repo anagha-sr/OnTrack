@@ -1,5 +1,7 @@
 import type { SingleTimerMessage } from "../types/messagesTypes";
 import type { SingleTimerState } from "../types/singleTimerTypes";
+import setBadge from "./setBadge";
+import playSound from "./playSound";
 //All time units are in milliseconds.
 
 export async function handleSingleTimerMessage(message: SingleTimerMessage) {
@@ -77,13 +79,17 @@ export async function handleSingleTimerAlarm(alarm: chrome.alarms.Alarm) {
   }
   
   await chrome.storage.local.set({ "single-timer":completedSingleTimer});
-  await chrome.action.setBadgeText({ text: "!" });
-  await chrome.action.setBadgeBackgroundColor({ color: "#ff0000" });
+  await setBadge();
   await chrome.notifications.create({
     type: "basic",
     title: "Timer",
     message: "Timer ended",
     iconUrl: "images/icon-16.png",
+    
+  },(notificationId) => {
+    console.log("notificationId:", notificationId);
+    console.log("error:", chrome.runtime.lastError);
   });
+  playSound();
 }
 

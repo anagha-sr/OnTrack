@@ -49,14 +49,14 @@ function Tasks() {
   }
 
   return (
-    <main>
-      <h1>Tasks</h1>
-      <nav>
+    <section>
+      <h2 className="sr-only">Tasks</h2>
+      <nav className="sub-tabs">
         {taskTabs.map((tab) => (
           <button
             key={tab}
             onClick={() => setCurrentTab(tab)}
-            className={tab === currentTab ? "active" : ""}
+            className={`sub-tab ${tab === currentTab ? "active" : ""}`}
             aria-selected={tab === currentTab}
           >
             {tab}
@@ -64,7 +64,7 @@ function Tasks() {
         ))}
       </nav>
       <section>
-        <h2>{currentTab}</h2>
+        <h2 className="sr-only">{currentTab}</h2>
         <ul>
           {tasks[currentTab].map((task) => (
             <li key={task.id}>
@@ -78,7 +78,7 @@ function Tasks() {
           ))}
         </ul>
       </section>
-    </main>
+    </section>
   );
 }
 

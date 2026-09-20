@@ -1,5 +1,7 @@
 import { type LoopTimerMessage } from "../types/messagesTypes";
 import type { LoopTimerState } from "../types/loopTimerTypes";
+import setBadge from "./setBadge";
+import playSound from "./playSound";
 
 
 export async function handleLoopTimerMessage(message: LoopTimerMessage) {
@@ -130,12 +132,12 @@ export async function handleLoopTimerAlarm(alarm: chrome.alarms.Alarm) {
     status: "waiting",
   }
   await chrome.storage.local.set({ "loop-timer": waitingLoopTimer });
-  await chrome.action.setBadgeText({ text: "!" });
-  await chrome.action.setBadgeBackgroundColor({ color: "#ff0000" });
+  await setBadge();
   await chrome.notifications.create({
     type: "basic",
     title: "Timer",
     message: "Timer ended",
     iconUrl: "images/icon-16.png",
   });
+  await playSound();
 }
