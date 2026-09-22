@@ -40,9 +40,13 @@
   background-color: var(--bg);
   color: var(--primary-hover);
   border-bottom: 1px solid var(--bg);
+  scroll-behavior: smooth;
 }
 .sub-tabs {
   display: flex;
+    overflow-x:auto;
+    padding-bottom: 3px;
+
 }
 .sub-tab {
   flex: 0;
@@ -57,6 +61,11 @@
   font-size: 1rem;
   transition: all 0.3s ease-in-out;
 }
+.sub-tab input {
+  box-sizing: border-box;
+  width: 100%;
+  min-width:32px;
+}
 .sub-tab:hover {
   background-color: var(--background);
   color: var(--primary-hover);
@@ -64,7 +73,7 @@
 
 .sub-tab.active {
   cursor: default;
-  flex: 1;
+  flex: 1 ;
   background-color: var(--bg);
   color: var(--primary-hover);
   border-bottom: 1px solid var(--bg);
@@ -131,3 +140,32 @@ input[type="number"]::-webkit-outer-spin-button {
 
   /* font-size: 1.2rem; */
 }
+.rename-input{
+  border: 1px solid var(--border);
+  background-color: var(--surface);
+  color: var(--text);
+}
+.task-checkbox{
+  width: 1.4rem;
+  height: 1.4rem;
+  accent-color: var(--brand-green);
+}
+.task-label{
+  flex:1;
+  cursor: pointer;
+  display: flex;
+  justify-items: center;
+  padding:0.5em; 
+  gap: 0.5rem;
+  border: 1px solid var(--border);
+  background-color: var(--surface);
+  color: var(--text);
+  border-radius: 10px;
+  transition: all 0.1s linear; ;
+}
+.task-label:hover{
+  background-color: var(--background);
+  color: var(--primary-hover);
+}
+
+   /* "flex items-center gap-3 rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 transition-colors hover:bg-[var(--bg)]" */
