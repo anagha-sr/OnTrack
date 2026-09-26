@@ -67,5 +67,19 @@ export type TaskMessage = {
   tabId: string;
   tabName: string;
 }
-
-
+export type TrackingMessage = {
+  type: "UPDATE_TRACKING";
+};
+export type JotsMessage = {
+  type: "ADD_JOTS";
+  content: string;
+}|
+{
+  type: "UPDATE_JOTS";
+  content: string;
+  id: string;
+}|
+{
+  type: "DELETE_JOTS";
+  id: string;
+}

@@ -1,17 +1,24 @@
 import { useState } from "react";
-import Timer from "./pages/Timer";
+
+import TimerPage from "./pages/TimerPage";
 import TasksPage from "./pages/TasksPage";
+import TrackerPage from "./pages/TrackerPage";
+
 
 import "./App.css";
 import Footer from "./components/common/Footer";
 import useStorageValueReadOnly from "./hooks/useStorageReadOnly";
 import type { SingleTimerState } from "./types/singleTimerTypes";
 import type { LoopTimerState } from "./types/loopTimerTypes";
+import JotsPage from "./pages/JotsPage";
+
 const mainTabs = [
   { id: "timer", label: "Timer" },
   { id: "tasks", label: "Tasks" },
   { id: "tracker", label: "Tracker" },
+  { id: "jots", label: "Jots" },
 ] as const;
+
 type MainTabId = (typeof mainTabs)[number]["id"];
 
 function App() {
@@ -50,8 +57,10 @@ function App() {
       </header>
       <main>
         <h1 className="sr-only">On Track.</h1>
-        {currentTab === "timer" && <Timer />}
+        {currentTab === "timer" && <TimerPage />}
         {currentTab === "tasks" && <TasksPage />}
+        {currentTab === "tracker" && <TrackerPage />}
+        {currentTab === "jots" && <JotsPage />}
       </main>
 
       {/* <button
@@ -73,7 +82,7 @@ function App() {
       >
         Test storage-loop
       </button> */}
-      <button
+      {/* <button
         onClick={() => {
           chrome.storage.local.get("taskstate").then((result) => {
             alert(JSON.stringify(result));
@@ -81,7 +90,7 @@ function App() {
         }}
       >
         Test taskstate
-      </button>
+      </button> */}
       <Footer />
     </>
   );

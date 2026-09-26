@@ -186,187 +186,185 @@ function TasksPage() {
       </nav>
       <h2 className="sr-only">{currentTab}</h2>
 
-      <div className="flex flex-col gap-1">
-        {currentTab && taskState?.[currentTab]?.tasks?.length === 0 && (
-          <div className="flex flex-col items-center justify-center gap-2">
-            <p className="text-center pt-4 text-lg">
-              No tasks in this category
-              <br />
-              Add a task to get started
-            </p>
-          </div>
-        )}
-        {/* add task */}
-        <div className="mt-4  flex items-center justify-center gap-2">
-          <div className="tooltip-wrapper">
-            <button
-              aria-label={
-                isAddTaskOpen ? "Close add task form." : "Open add task form."
-              }
-              onClick={() => setIsAddTaskOpen(!isAddTaskOpen)}
-              className="btn btn-round btn-outline "
-            >
-              {isAddTaskOpen ? (
-                  <span className="material-symbols-outlined">close</span>
-              ) : (
-                  <span className="material-symbols-outlined">add</span>
-              )}
-              {isAddTaskOpen ? <span className="tooltip">Cancel</span> : <span className="tooltip">Add task</span>}
-            </button>
-          </div>
-
-          {isAddTaskOpen && (
-            <div className="flex flex-1 gap-2">
-              <input
-                className="min-w-0 flex-1 rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm text-[var(--text)] outline-none placeholder:text-gray-400 focus:border-[var(--brand-green)] focus:ring-2 focus:ring-[var(--focus)]"
-                type="text"
-                placeholder="Task description"
-                value={newTaskDescription}
-                onChange={(e) => setNewTaskDescription(e.target.value)}
-                aria-hidden={!isAddTaskOpen}
-                autoFocus
-                onKeyDown={(event) => {
-                  if (event.key === "Enter") {
-                    handleAddTask();
-                  }
-                }}
-              />
-
-              <button
-                aria-label="Add task."
-                disabled={!newTaskDescription}
-                onClick={() => handleAddTask()}
-                className="btn btn-secondary "
-              >
-                Add
-              </button>
-            </div>
-          )}
-        </div>
-        {/* all tasks  completed*/}
-        {currentTab &&
-          taskState?.[currentTab]?.tasks?.length !== 0 &&
-          taskState?.[currentTab]?.tasks?.filter((task) => !task.completed)
-            .length === 0 && (
+      <div className="task-list">
+        <div className="flex flex-col gap-1">
+          {currentTab && taskState?.[currentTab]?.tasks?.length === 0 && (
             <div className="flex flex-col items-center justify-center gap-2">
               <p className="text-center pt-4 text-lg">
-                All tasks completed! ✨
+                No tasks in this category
+                <br />
+                Add a task to get started
               </p>
             </div>
           )}
-        {/* incomplete tasks */}
-        <ul className="flex flex-col gap-2 mt-3">
-          {currentTab &&
-            taskState?.[currentTab]?.tasks
-              ?.filter((task) => !task.completed)
-              .reverse()
-              .map((task) => (
-               
-                  <li
-                    key={task.taskId}
-                    className="flex items-center gap-1"
-                  >
-                     <label
-                  htmlFor={task.taskId}
-                  key={task.taskId}
-                  aria-label={task.description}
-                  className="task-label"
+          {/* add task */}
+          <div className="mt-4  flex items-center justify-center gap-2">
+            <div className="tooltip-wrapper">
+              <button
+                aria-label={
+                  isAddTaskOpen ? "Close add task form." : "Open add task form."
+                }
+                onClick={() => setIsAddTaskOpen(!isAddTaskOpen)}
+                className="btn btn-round btn-outline "
+              >
+                {isAddTaskOpen ? (
+                    <span className="material-symbols-outlined">close</span>
+                ) : (
+                    <span className="material-symbols-outlined">add</span>
+                )}
+              </button>
+                            {isAddTaskOpen ? <span className="tooltip">Cancel</span> : <span className="tooltip">Add task</span>}
+            </div>
+            {isAddTaskOpen && (
+              <div className="flex flex-1 gap-2">
+                <input
+                  className="min-w-0 flex-1 rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm text-[var(--text)] outline-none placeholder:text-gray-400 focus:border-[var(--brand-green)] focus:ring-2 focus:ring-[var(--focus)]"
+                  type="text"
+                  placeholder="Task description"
+                  value={newTaskDescription}
+                  onChange={(e) => setNewTaskDescription(e.target.value)}
+                  aria-hidden={!isAddTaskOpen}
+                  autoFocus
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter") {
+                      handleAddTask();
+                    }
+                  }}
+                />
+                <button
+                  aria-label="Add task."
+                  disabled={!newTaskDescription}
+                  onClick={() => handleAddTask()}
+                  className="btn btn-secondary "
                 >
-                    <input
-                      id={task.taskId}
-                      type="checkbox"
-                      checked={task.completed}
-                      onChange={() => handleTaskToggle(task.taskId)}
-                      className="task-checkbox"
-                    />
-
-                    <span
-                      className={`flex-1 text-sm ${
-                        task.completed
-                          ? "text-gray-400 line-through"
-                          : "text-[var(--text)]"
-                      }`}
-                    >
-                      {task.description}
-                    </span>
-                    </label>
-                    <div className="tooltip-wrapper">
-                      <button
-                        aria-label="Delete task."
-                        onClick={() => handleDeleteTask(task.taskId)}
-                        className="material-symbols-outlined btn btn-text"
-                      >
-                        delete
-                      </button>
-                      <span className="tooltip">Delete this task</span>
-                    </div>
-                  </li>
-             
-              ))}
-        </ul>
-      </div>
-      <hr className="my-4 border-[var(--border)]" />
-      {/* completed tasks */}
-      <div className="flex flex-col gap-3">
-                <ul className="flex flex-col gap-2 mt-3">
+                  Add
+                </button>
+              </div>
+            )}
+          </div>
+          {/* all tasks  completed*/}
           {currentTab &&
-            taskState?.[currentTab]?.tasks
-              ?.filter((task) => task.completed)
-              .reverse()
-              .map((task) => (
-               
-                  <li
-                    key={task.taskId}
-                    className="flex items-center gap-1"
-                  >
-                     <label
-                  htmlFor={task.taskId}
-                  key={task.taskId}
-                  aria-label={task.description}
-                  className="task-label"
-                >
-                    <input
-                      id={task.taskId}
-                      type="checkbox"
-                      checked={task.completed}
-                      onChange={() => handleTaskToggle(task.taskId)}
-                      className="task-checkbox"
-                    />
-
-                    <span
-                      className={`flex-1 text-sm ${
-                        task.completed
-                          ? "text-gray-400 line-through"
-                          : "text-[var(--text)]"
-                      }`}
+            taskState?.[currentTab]?.tasks?.length !== 0 &&
+            taskState?.[currentTab]?.tasks?.filter((task) => !task.completed)
+              .length === 0 && (
+              <div className="flex flex-col items-center justify-center gap-2">
+                <p className="text-center pt-4 text-lg">
+                  All tasks completed! ✨
+                </p>
+              </div>
+            )}
+          {/* incomplete tasks */}
+          <ul className="flex flex-col gap-2 mt-3">
+            {currentTab &&
+              taskState?.[currentTab]?.tasks
+                ?.filter((task) => !task.completed)
+                .reverse()
+                .map((task) => (
+        
+                    <li
+                      key={task.taskId}
+                      className="flex items-center gap-1"
                     >
-                      {task.description}
-                    </span>
-                    </label>
-                    <div className="tooltip-wrapper">
-                      <button
-                        aria-label="Delete task."
-                        onClick={() => handleDeleteTask(task.taskId)}
-                        className="material-symbols-outlined btn btn-text"
+                       <label
+                    htmlFor={task.taskId}
+                    key={task.taskId}
+                    aria-label={task.description}
+                    className="task-label"
+                  >
+                      <input
+                        id={task.taskId}
+                        type="checkbox"
+                        checked={task.completed}
+                        onChange={() => handleTaskToggle(task.taskId)}
+                        className="task-checkbox"
+                      />
+                      <span
+                        className={`flex-1 text-sm ${
+                          task.completed
+                            ? "text-gray-400 line-through"
+                            : "text-[var(--text)]"
+                        }`}
                       >
-                        delete
-                      </button>
-                      <span className="tooltip">Delete this task</span>
-                    </div>
-                  </li>
-             
-              ))}
-        </ul>
+                        {task.description}
+                      </span>
+                      </label>
+                      <div className="tooltip-wrapper">
+                        <button
+                          aria-label="Delete task."
+                          onClick={() => handleDeleteTask(task.taskId)}
+                          className="material-symbols-outlined btn btn-text"
+                        >
+                          delete
+                        </button>
+                        <span className="tooltip">Delete this task</span>
+                      </div>
+                    </li>
+        
+                ))}
+          </ul>
+        </div>
+        <hr className="my-4 border-[var(--border)]" />
+        {/* completed tasks */}
+        <div className="flex flex-col gap-3">
+                  <ul className="flex flex-col gap-2 mt-3">
+            {currentTab &&
+              taskState?.[currentTab]?.tasks
+                ?.filter((task) => task.completed)
+                .reverse()
+                .map((task) => (
+        
+                    <li
+                      key={task.taskId}
+                      className="flex items-center gap-1"
+                    >
+                       <label
+                    htmlFor={task.taskId}
+                    key={task.taskId}
+                    aria-label={task.description}
+                    className="task-label"
+                  >
+                      <input
+                        id={task.taskId}
+                        type="checkbox"
+                        checked={task.completed}
+                        onChange={() => handleTaskToggle(task.taskId)}
+                        className="task-checkbox"
+                      />
+                      <span
+                        className={`flex-1 text-sm ${
+                          task.completed
+                            ? "text-gray-400 line-through"
+                            : "text-[var(--text)]"
+                        }`}
+                      >
+                        {task.description}
+                      </span>
+                      </label>
+                      <div className="tooltip-wrapper">
+                        <button
+                          aria-label="Delete task."
+                          onClick={() => handleDeleteTask(task.taskId)}
+                          className="material-symbols-outlined btn btn-text"
+                        >
+                          delete
+                        </button>
+                        <span className="tooltip">Delete this task</span>
+                      </div>
+                    </li>
+        
+                ))}
+          </ul>
+        </div>
       </div>
       {currentTab && (
         <div className="mt-4 flex justify-end">
-          <button onClick={() => alert("currentTab:" + currentTab)}>
+          {/* <button onClick={() => alert("currentTab:" + currentTab)}>
             test currentTab
-          </button>
+          </button> */}
           <div className="tooltip-wrapper">
             <button
               onClick={() => handleDeleteTab(currentTab)}
-              className="btn btn-danger btn-round"
+              className="btn btn-round btn-outline "
               aria-label="Delete this category."
             >
               <span className="material-symbols-outlined">delete</span>

@@ -45,31 +45,44 @@
 
 #root {
   width: 400px;
+  margin: 0;
   box-sizing: border-box;
   background-color: var(--bg);
   color: var(--text);
   border: 1px solid var(--border);
   padding: var(--padding-y) var(--padding-x) var(--padding-y) var(--padding-x);
-
 }
 
-body {
+html,body {
+  padding: 0;
   margin: 0;
+  width: 400px;
+  overflow-x: hidden;
+
+}
+body{
+
   background-color: var(--bg);
   color: var(--text);
   font-family:  "Encode Sans Expanded", sans-serif;
   font-weight: 100;
   font-style: normal;
   font-size: 1rem;
+  scroll-behavior: smooth;
+  scroll-padding: 0;
+  scroll-margin: 0;
+
+  overflow-y: auto;
+
 }
 main,section,.content{
   padding: var(--padding-y) var(--padding-x) var(--padding-y) var(--padding-x);
 }
-main{
+/* main{
   border-width: 0 1px 0px 1px;
   border-style: solid;
   border-color: var(--border);
-}
+} */
 .card {
   background: var(--surface);
   border: 1px solid var(--border);
